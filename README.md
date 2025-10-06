@@ -9,8 +9,8 @@
 * **任务类型**：回归（目标变量：`price`，单位 USD）
 * **核心字段**：
 
-  * title：`title`, `body`
-  * 类别：`category`, `amenities`, `pets_allowed`, `has_photo`, `source`, `fee`（是否额外费用）
+  * category：`租赁市场内房源的分类。`
+  * title：`简短的文字标题概括了公寓的情况。`
   * 结构：`bedrooms`, `bathrooms`, `square_feet`
   * 地理：`cityname`, `state`, `latitude`, `longitude`
   * 时间：`time`
