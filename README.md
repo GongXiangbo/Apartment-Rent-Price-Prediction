@@ -37,46 +37,46 @@
 
 ### 1) 列删减（Column Pruning）
 
-* **删除 `currency` 与 `price_type`**：这两列在数据中**取值恒定**，对模型回归无信息增益，保留只会增加无效维度。
-* **删除 `address`**：该列**缺失值极多且难以可靠填充**；同时我们已拥有 `cityname / state / latitude / longitude`，能更稳定地承载地理信息，故删去以降低噪声。
+* **删除`currency`与 `price_type`**：这两列在数据中取值恒定，对模型回归无任何信息增益，保留只会增加无效维度。
+* **删除`address`**：该列**缺失值极多且难以可靠填充**；更重要的是，我们已拥有`cityname / state / latitude / longitude`这四列，它们能更稳定、更结构化地承载地理信息。因此，删去`address`以降低噪声并避免信息冗余。
 
 ### 2) 设施与宠物（Multi-hot Encoding）
 
 * **`amenities` 的缺失值 → `Nothing`**：
 
-  * 原因：若直接空值将被独热/多热编码忽略，等价于**丢失一种“无设施”的语义**。用占位符保留“无”的信息，有助于模型识别“缺省=无”。
+  * 原因：如果将缺失值留空，大多数编码器会直接忽略它，这等价于丢失了“无设施”这一重要信息。通过填充特定占位符，我们让模型能够明确区分“未提供设施列表”和“提供了但列表为空”的情况，保留了“无”的语义。
   * 实现：`SimpleImputer(fill_value='Nothing')` → 字符串按逗号切分 → `MultiLabelBinarizer`（自定义 `MultiHotEncoder`）。
 * **`pets_allowed` 的缺失值 → `No`**：
 
-  * 原因同上：保留“默认不允许宠物”的含义，避免因为缺失而被编码器忽略。
+  * 原因同上：逻辑同上。在租赁市场，信息缺失通常意味着“不允许”，而不是“允许所有类型”。填充为`No`更符合业务常识，避免因缺失而被编码器忽略。
   * 实现：`SimpleImputer(fill_value='No')` → 逗号切分 → 多热编码。
 
 ### 3) 类别降噪与稳健独热（Low-Card & Rare Bucketing）
 
-* **`category` 清洗与映射**：将原始路径式类别清洗并**归并为少量语义稳定的类**（如 `apartment`, `home`, `condo`, `short_term`, `commercial/retail`, `others`）。
+* **`category` 清洗与映射**：原始类别是冗长的路径格式，存在大量噪音和高基数问题。因此，我们将其归并为少量核心语义类（如`apartment`, `home`, `condo`等），这能让模型更专注于类别间的本质差异。
 * **`fee / has_photo / source`**：
 
   * 用众数填补缺失。
-  * 使用 `OneHotEncoder(handle_unknown='infrequent_if_exist', min_frequency=0.05)`，自动将**低频类别合并为“稀有桶”**，抑制高维稀疏与过拟合。
+  * 使用 `OneHotEncoder(handle_unknown='infrequent_if_exist', min_frequency=0.05)`。为何要合并低频类？ 因为在数据集中出现次数极少的类别（如某个小众来源网站）很难让模型学习到其稳定模式，反而可能导致过拟合。此设置将所有频率低于5%的类别自动合并为一个“稀有”特征，增强了模型的泛化能力。
 
 ### 4) 文本建模（Title & Body）
 
 * **清洗**：
 
   * 统一小写，去 URL / 邮箱，标准化空白。
-  * **价格遮蔽**：用占位符 `__PRICE__` 屏蔽文案里的货币/数额模式（避免把“要价”泄漏给特征，造成目标泄漏）。
+  * **价格遮蔽**：为何要遮蔽价格？ 房源描述中常直接包含租金数额（例如 "Rent is $1500"），这属于目标泄漏。如果不移除，模型会学会“抄答案”，导致在交叉验证中分数虚高，但在预测未知价格的真实场景中表现极差。我们用占位符`__PRICE__`屏蔽文案里的货币/数额模式，强制模型从文本的真实语义中学习。
 * **表示**：
 
   * `TfidfVectorizer`（词 n-gram + 适度的字符 n-gram），`min_df≥3`、`sublinear_tf`、`smooth_idf`、`strip_accents='unicode'`。
-  * **标题加权融合**：通过 `ColumnTransformer` 将 `title` 与 `body` 按权重**3:1**线性池化（`title_weight=3.0`），以强调标题的强信号。
+  * **标题加权融合**：通过`ColumnTransformer`将`title`与`body`的TF-IDF向量按权重3:1线性组合。为何给标题更高权重？ 因为标题通常是房源信息的高度浓缩和核心卖点，其信噪比远高于正文，给予更高权重有助于模型更快抓住关键信息。
 
 ### 5) 结构三件套（bedrooms/bathrooms/square_feet）
 
 * 统一转数值；使用**自定义相似度填充器** `BedBathSqftSimilarityImputer`：
-
+* 为何不用简单的均值/中位数填充？ 因为房型面积、卧室与浴室数之间存在极强的物理关联。若用全局均值填充，可能会产生“5个卧室但面积只有500平方英尺”这类不合逻辑的数据，从而误导模型。我们的方法通过寻找“相似”房源进行局部插补，估算结果更精准、更符合现实：
   * `square_feet`：优先在**相同 (bedrooms, bathrooms)** 组内用均值填充。
-  * `bedrooms`：以**面积相近 + 相同 bathrooms** 的样本做 KNN 式均值；兜底用 `bathrooms` 分组均值与全局均值。
-  * `bathrooms`：以**面积相近 + 相同 bedrooms** 的样本做 KNN 式均值；兜底与上同。
+  * `bedrooms`：优先寻找面积相近且`bathrooms`相同的 K 个邻居，用它们的卧室数均值填充；若找不到，则退一步用相同`bathrooms`的房源均值，最后用全局均值兜底。
+  * `bathrooms`：逻辑与`bedrooms`类似，寻找面积相近且`bedrooms`相同的邻居。
 
 ### 6) 地理特征（City/State/Lat/Lon）
 
@@ -89,7 +89,8 @@
 
 ### 7) 时间编码（Time）
 
-* 将时间戳映射为：`sin(month)`、`cos(month)` 与 `days_since_first`（相对项目内最早时间的天数），同时具备**季节周期性与时间距信息**。
+* 将时间戳映射为：`sin(month)`、`cos(month)`与 `days_since_first`三个特征。
+* 为何如此编码？ 单纯的月份（1-12）是线性而非周期性的，模型无法理解12月和1月是相邻的。通过正弦/余弦变换，我们将月份映射到一个圆上，保留了季节的周期性。同时，`days_since_first`作为一个线性递增特征，则帮助模型捕捉租金随时间变化的长期趋势。
 
 ---
 
