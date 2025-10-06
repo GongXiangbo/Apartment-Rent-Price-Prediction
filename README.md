@@ -1,4 +1,6 @@
-# 美国租房价格预测（Apartment Rent Price Prediction）
+English version: [Apartment Rent Price Prediction](README.en.md)
+
+# 美国租房价格预测
 **数据下载**：Google Drive — [点击访问数据集](https://drive.google.com/drive/folders/1igJiDJNReEFYZuoK4TCpq8Ee6z6t-_Sp?usp=sharing)
 
 本项目旨在根据房源的结构、地理位置、文本描述与设施信息，预测公寓月租金（`price`）。项目包含一条**端到端的可复现实验管线**：数据清洗 → 特征工程 → 模型选择与调参 → 评估与导出结果。
