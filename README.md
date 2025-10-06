@@ -104,11 +104,11 @@ English version: [Apartment Rent Price Prediction](README.en.md)
 
 * **模型**：`XGBRegressor`
 
-  * 目标：`reg:absoluteerror`（直接以 MAE 优化）
+  * 目标：`reg:absoluteerror`（直接以MAE优化）
   * 训练：`tree_method='hist'`，`max_bin=128`，`min_child_weight=6.0`，`subsample=0.8`
   * 正则：`reg_alpha=0.1`，`reg_lambda=5.0`
-  * 设备：默认 `device='cuda'`（如无 GPU，可改为 `device='cpu'` 或删除该参数）
-* **搜索策略**：`HalvingGridSearchCV`（5 折，评分 `neg_mean_absolute_error`）
+  * 设备：默认 `device='cuda'`（如无GPU，可改为`device='cpu'`或删除该参数）
+* **搜索策略**：`HalvingGridSearchCV`（5折，评分 `neg_mean_absolute_error`）
 
   * 网格：
 
