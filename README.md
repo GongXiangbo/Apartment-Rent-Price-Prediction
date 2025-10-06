@@ -95,6 +95,31 @@
 
 ## 🧱 特征管线（sklearn `ColumnTransformer`）
 
+graph TD
+    A[原始数据 DataFrame] --> B(Preprocessor: ColumnTransformer);
+    B --> C{category};
+    B --> D{title, body};
+    B --> E{amenities};
+    B --> F{pets_allowed};
+    B --> G{bedrooms, ...};
+    B --> H{latitude, ...};
+    B --> I{time};
+
+    C --> C1[Category Pipe];
+    D --> D1[Text Pipe];
+    E --> E1[Amenities Pipe];
+    F --> F1[Pets Pipe];
+    G --> G1[Layout Pipe];
+    H --> H1[Geo Pipe];
+    I --> I1[Time Pipe];
+
+    subgraph Final Model
+        C1 & D1 & E1 & F1 & G1 & H1 & I1 --> J[拼接特征矩阵];
+        J --> K[XGBRegressor 模型];
+    end
+
+    style B fill:#f9f,stroke:#333,stroke-width:2px
+
 * 子管线：`category_pipe`, `title_body_pipeline`, `amenities_pipe`, `pets_allowed_pipe`, `fee_photo_source_pipe`, `bed_bath_sqft_pipe`, `geo_pipe`, `time_pipe`。
 * 组合后作为 `preprocess` 接到最终模型之前。
 
