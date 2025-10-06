@@ -1,5 +1,7 @@
 # 美国租房价格预测（Apartment Rent Price Prediction）
 
+> 课程项目：Data Science Lab — Summer Call, A.Y. 2024/2025（Politecnico di Torino）
+
 本项目旨在根据房源的结构、地理位置、文本描述与设施信息，预测公寓月租金（`price`）。项目包含一条**端到端的可复现实验管线**：数据清洗 → 特征工程 → 模型选择与调参 → 评估与导出结果。
 
 ---
@@ -7,15 +9,27 @@
 ## 📦 数据与任务
 
 * **任务类型**：回归（目标变量：`price`，单位 USD）
-* **核心字段**：
+* **核心字段（字段释义）**：
 
-  * category：`租赁市场内房源的分类。`
-  * title：`简短的文字标题概括了公寓的情况。`
-  * 结构：`bedrooms`, `bathrooms`, `square_feet`
-  * 地理：`cityname`, `state`, `latitude`, `longitude`
-  * 时间：`time`
+  * `amenities`：可用设施列表（例如空调、篮球场、有线/宽带、健身房、泳池、冰箱等）。
+  * `bathrooms`：公寓中的卫生间数量。
+  * `bedrooms`：公寓中的卧室数量。
+  * `currency`：价格最初使用的货币类型。
+  * `fee`：与公寓相关的任何额外费用。
+  * `has_photo`：布尔值，指示该房源是否包含照片。
+  * `pets_allowed`：允许的宠物类型（如狗、猫等）。
+  * `price_type`：以USD标准化的价格类型。
+  * `square_feet`：公寓面积（平方英尺）。
+  * `address`：详细地址。
+  * `cityname`：公寓所在的城市。
+  * `state`：公寓所在的州。
+  * `latitude`：公寓位置的地理纬度。
+  * `longitude`：公寓位置的地理经度。
+  * `source`：获取该房源的平台或网站。
+  * `time`：房源创建的时间戳。
+  * `price`：数值型租金价格（目标变量）。
 
-> 说明：仓库中提供了 `train.csv` 与 `test.csv`（两者均含 `price` 以便最终测试指标计算）。
+> 说明：仓库中提供了拆分后的 `train.csv` 与 `test.csv`（两者均含 `price` 以便最终测试指标计算）。
 
 ---
 
@@ -121,18 +135,20 @@
 
 ---
 
-## 🗂️ 仓库结构
+## 🗂️ 仓库结构（建议）
 
 ```
 .
 ├── notebooks/
 │   └── predict_house_price.ipynb      # 主实验笔记本（端到端管线）
 ├── data/                              # 可选：原始/中间数据（不强制入库）
-│   ├── train.csv                      # 本项目训练集
-│   └── test.csv                       # 本项目测试集
+│   ├── development.csv
+│   ├── evaluation.csv
+│   ├── train.csv                      # 本项目训练集（含 price）
+│   └── test.csv                       # 本项目测试集（含 price）
 ├── requirements.txt                   # 复现实验环境
 ├── README.md                          # 项目说明（本文档）
-└── LICENSE                            # 许可证
+└── LICENSE                            # 许可证（自选）
 ```
 
 ---
