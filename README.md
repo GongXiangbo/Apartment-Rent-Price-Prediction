@@ -15,7 +15,7 @@
   * 地理：`cityname`, `state`, `latitude`, `longitude`
   * 时间：`time`
 
-> 说明：仓库中提供了拆分后的 `train.csv` 与 `test.csv`（两者均含 `price` 以便最终测试指标计算）。
+> 说明：仓库中提供了 `train.csv` 与 `test.csv`（两者均含 `price` 以便最终测试指标计算）。
 
 ---
 
@@ -121,20 +121,18 @@
 
 ---
 
-## 🗂️ 仓库结构（建议）
+## 🗂️ 仓库结构
 
 ```
 .
 ├── notebooks/
 │   └── predict_house_price.ipynb      # 主实验笔记本（端到端管线）
 ├── data/                              # 可选：原始/中间数据（不强制入库）
-│   ├── development.csv
-│   ├── evaluation.csv
-│   ├── train.csv                      # 本项目训练集（含 price）
-│   └── test.csv                       # 本项目测试集（含 price）
+│   ├── train.csv                      # 本项目训练集
+│   └── test.csv                       # 本项目测试集
 ├── requirements.txt                   # 复现实验环境
 ├── README.md                          # 项目说明（本文档）
-└── LICENSE                            # 许可证（自选）
+└── LICENSE                            # 许可证
 ```
 
 ---
@@ -179,15 +177,3 @@ pip install -r requirements.txt
 * **模型集成**：与 `LightGBM`/`CatBoost`/线性模型混合、Stacking/Blending。
 * **稳健性评估**：时序切分、城市间迁移验证、误差分布与异常值分析。
 * **业务约束**：对不合理预测施加单调性约束或分段校准。
-
----
-
-## 📄 许可证
-
-* 请选择合适许可证（如 MIT）。
-
----
-
-## 🤝 引用与致谢
-
-* 课程作业题目与原始字段定义来自课程资料；实现与实验流程由本人独立完成。
