@@ -1,4 +1,5 @@
 # 美国租房价格预测（Apartment Rent Price Prediction）
+**数据下载**：Google Drive — [点击访问数据集](https://drive.google.com/drive/folders/1igJiDJNReEFYZuoK4TCpq8Ee6z6t-_Sp?usp=sharing)
 
 本项目旨在根据房源的结构、地理位置、文本描述与设施信息，预测公寓月租金（`price`）。项目包含一条**端到端的可复现实验管线**：数据清洗 → 特征工程 → 模型选择与调参 → 评估与导出结果。
 
@@ -26,9 +27,6 @@
   * `source`：获取该房源的平台或网站。
   * `time`：房源创建的时间戳。
   * `price`：数值型租金价格（目标变量）。
-
-> 说明：仓库中提供了拆分后的 `train.csv` 与 `test.csv`（两者均含 `price` 以便最终测试指标计算）。
-
 ---
 
 ## 🧹 数据清洗与特征工程（Design Choices）
@@ -130,23 +128,6 @@
   * **MAPE ≈ 12.10%**
 
 > 注：以上指标来自 `notebooks/predict_house_price.ipynb` 的实际运行输出。由于随机性与环境差异，数值可能有轻微波动（`RANDOM_STATE=42`）。
-
----
-
-## 🗂️ 仓库结构
-
-```
-.
-├── notebooks/
-│   └── predict_house_price.ipynb      # 主实验笔记本（端到端管线）
-├── data/                              
-│   ├── train.csv                      # 本项目训练集（含 price）
-│   └── test.csv                       # 本项目测试集（含 price）
-├── requirements.txt                   # 复现实验环境
-├── README.md                          # 项目说明（本文档）
-└── LICENSE                            # 许可证
-```
-
 ---
 
 ## 🚀 快速开始
