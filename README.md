@@ -133,20 +133,18 @@
 
 ---
 
-## 🗂️ 仓库结构（建议）
+## 🗂️ 仓库结构
 
 ```
 .
 ├── notebooks/
 │   └── predict_house_price.ipynb      # 主实验笔记本（端到端管线）
-├── data/                              # 可选：原始/中间数据（不强制入库）
-│   ├── development.csv
-│   ├── evaluation.csv
+├── data/                              
 │   ├── train.csv                      # 本项目训练集（含 price）
 │   └── test.csv                       # 本项目测试集（含 price）
 ├── requirements.txt                   # 复现实验环境
 ├── README.md                          # 项目说明（本文档）
-└── LICENSE                            # 许可证（自选）
+└── LICENSE                            # 许可证
 ```
 
 ---
