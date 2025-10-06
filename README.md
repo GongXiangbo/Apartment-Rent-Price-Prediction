@@ -1,7 +1,5 @@
 # 美国租房价格预测（Apartment Rent Price Prediction）
 
-> 课程项目：Data Science Lab — Summer Call, A.Y. 2024/2025（Politecnico di Torino）
-
 本项目旨在根据房源的结构、地理位置、文本描述与设施信息，预测公寓月租金（`price`）。项目包含一条**端到端的可复现实验管线**：数据清洗 → 特征工程 → 模型选择与调参 → 评估与导出结果。
 
 ---
