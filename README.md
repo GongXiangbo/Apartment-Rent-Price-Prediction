@@ -9,7 +9,7 @@
 * **任务类型**：回归（目标变量：`price`，单位 USD）
 * **核心字段**：
 
-  * 文本：`title`, `body`
+  * title：`title`, `body`
   * 类别：`category`, `amenities`, `pets_allowed`, `has_photo`, `source`, `fee`（是否额外费用）
   * 结构：`bedrooms`, `bathrooms`, `square_feet`
   * 地理：`cityname`, `state`, `latitude`, `longitude`
